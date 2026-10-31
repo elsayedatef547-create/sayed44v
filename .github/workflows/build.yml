@@ -69,6 +69,14 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             | tee build.log | (xcpretty 2>/dev/null || cat)
 
+      - name: Show compile errors (on failure)
+        if: failure()
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          echo "===== COMPILE ERRORS ====="
+          grep -E "error:" build.log | sed -E 's#^.*/##' | sort -u | head -60 || true
+          echo "===== END ====="
+
       - name: Package IPA
         working-directory: ${{ env.PROJECT_DIR }}
         run: |
